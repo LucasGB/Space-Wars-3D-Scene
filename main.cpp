@@ -36,7 +36,7 @@
 #include "load_3ds.h"
 #include "object.h"
 #include "camera.h"
-
+#include "functions.h"
 
 
 /**********************************************************
@@ -46,8 +46,8 @@
  *********************************************************/
 
 // The width and height of your window, change them as you like
-int screen_width=640;
-int screen_height=480;
+int screen_width=800;
+int screen_height=800;
 
 // Absolute rotation values (0-359 degrees) and rotation increments for each frame
 double rotation_x=0, rotation_x_increment=0.1;
@@ -84,6 +84,7 @@ void init(void)
 	MatrGenerateLookupTab();
 
     glClearColor(0.0, 0.0, 0.0, 0.0); // Clear background color to black
+    initskybox();
 
     // Viewport transformation
     glViewport(0,0,screen_width,screen_height);  
@@ -120,8 +121,12 @@ void init(void)
 	
 	//Objects loading
 	ObjLoad ("fighter1.3ds","skull.bmp",             -10.0, 0.0, -30.0,    900,0,0);
-	ObjLoad ("fighter2.3ds","skull.bmp",                     10.0, 0.0, -30.0,    900,0,0);
+	ObjLoad ("fighter2.3ds","",                     10.0, 0.0, -30.0,    900,0,0);
 	ObjLoad ("fighter3.3ds","spaceshiptexture.bmp",    0.0, 0.0, -30.0,    900,0,0);
+    // x, y, 
+    ObjLoad ("Earth.3ds","earth_texture.bmp",    5.0, 10.0, -30.0,    900,0,0);
+    ObjLoad ("starship.3ds","",    5.0, 0.0, -30.0,    900,0,0);
+    
 }
 
 
@@ -179,42 +184,55 @@ void keyboard(unsigned char p_key, int p_x, int p_y)
         break;
 		*/
 
+        // cima eixo y
 		case 'j': case 'J':
 			ObjTranslate(&object[obj_control],0,0,-1);
         break;
+        // baixo eixo y
 		case 'm': case 'M':
 			ObjTranslate(&object[obj_control],0,0,1);
         break;
+        // rotaciona anti-horario
         case 'k': case 'K':
 			ObjRotate(&object[obj_control],0,20,0);
         break;
+        // rotaciona horario
         case 'l': case 'L':
 			ObjRotate(&object[obj_control],0,-20,0);
         break;
+        // camera cima eixo y
         case 'e': case 'E':
 			CamRotate(20,0,0);
         break;
+        // camera baixo eixo y
         case 'c': case 'C':
 			CamRotate(-20,0,0);
         break;
+        //rotaciona x esquerda
         case 'a': case 'A':
 			CamRotate(0,-20,0);
         break;
+        //rotaciona x direita
         case 'd': case 'D':
 			CamRotate(0,20,0);
         break;
+        // rotaciona camera horario
         case 'z': case 'Z':
 			CamRotate(0,0,-20);
         break;
+        // rotaciona camera anti-horario
         case 'x': case 'X':
 			CamRotate(0,0,20);
         break;
+        // camera frente
         case 'w': case 'W':
 			CamTranslate(0,0,1);
         break;
+        // camera para tras
         case 's': case 'S':
 			CamTranslate(0,0,-1);
         break;
+        // raio-X
 		case 'r': case 'R':
             if (filling==0)
             {
@@ -288,8 +306,7 @@ void keyboard_s (int p_key, int p_x, int py)
  * 
  *********************************************************/
 
-void display(void)
-{
+void display(void){
     int i,j;
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // This clear the background color to dark blue
@@ -381,7 +398,7 @@ int main(int argc, char **argv)
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
     glutInitWindowSize(screen_width,screen_height);
     glutInitWindowPosition(0,0);
-    glutCreateWindow("www.spacesimulator.net - 3d engine tutorials - To exit press ESC");    
+    glutCreateWindow("Space Wars 3D Scene");    
     glutDisplayFunc(display);
     glutIdleFunc(display);
     glutReshapeFunc (resize);
